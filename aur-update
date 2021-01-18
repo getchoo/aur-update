@@ -1,0 +1,36 @@
+#!/bin/sh
+
+if [ $# -eq 0 ]
+then
+	echo "no arguments"
+	exit
+fi
+
+OLDREL="$(grep "pkgrel" PKGBUILD | sed -En "s/pkgrel=//p")"
+REL="$(expr 1 + $OLDREL)"
+MD5SUM="$(curl -sL $2 | md5sum | cut -d ' ' -f 1)"
+MD5="('$MD5SUM')"
+SHA1SUM="$(curl -sL $2 | sha1sum | cut -d ' ' -f 1)"
+SHA1="('$SHA1SUM')"
+SHA256SUM="$(curl -sL $2 | sha256sum | cut -d ' ' -f 1)"
+SHA256="('$SHA256SUM')"
+SHA224SUM="$(curl -sL $2 | sha224sum | cut -d ' ' -f 1)"
+SHA224="('$SHA224SUM')"
+SHA384SUM="$(curl -sL $2 | sha384sum | cut -d ' ' -f 1)"
+SHA384="('$SHA384SUM')"
+SHA512SUM="$(curl -sL $2 | sha512sum | cut -d ' ' -f 1)"
+SHA512="('$SHA512SUM')"
+B2SUM="$(curl -sL $2 | b2sum | cut -d ' ' -f 1)"
+B2="('$B2SUM')"
+SOURCE="('$2')"
+
+sed -i "s/pkgver=.*/pkgver=$1/" PKGBUILD
+sed -i "s/pkgrel=.*/pkgrel=$REL/" PKGBUILD
+sed -i "s/md5sums=.*/md5sums=$MD5/" PKGBUILD
+sed -i "s/sha1sums=.*/sha1sums=$SHA1/" PKGBUILD
+sed -i "s/sha256sums=.*/sha256sums=$SHA256/" PKGBUILD
+sed -i "s/sha224sums=.*/sha224sums=$SHA224/" PKGBUILD
+sed -i "s/sha384sums=.*/sha384sums=$SHA384/" PKGBUILD
+sed -i "s/sha512sums=.*/sha512sums=$SHA512/" PKGBUILD
+sed -i "s/b2sums=.*/b2sums=$B2/" PKGBUILD
+sed -i "s|source=.*|source=$SOURCE|" PKGBUILD
